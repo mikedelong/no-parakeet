@@ -3,6 +3,7 @@ from logging import basicConfig
 from logging import getLogger
 from time import time
 
+# https://blog.f-secure.com/how-to-get-tweets-from-a-twitter-account-using-python-and-tweepy/
 if __name__ == '__main__':
     time_start = time()
     logger = getLogger(__name__)
