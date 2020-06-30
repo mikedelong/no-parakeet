@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     authorization = OAuthHandler(consumer_key=api_key, consumer_secret=api_secret_key, )
     interface = API(auth_handler=authorization, wait_on_rate_limit=True, )
-    values = Cursor(interface.search, q=hash_tag,).items(10)
+    values = Cursor(interface.search, q=hash_tag, ).items(10)
     for value in values:
         logger.info(value)
 
