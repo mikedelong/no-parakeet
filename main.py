@@ -1,3 +1,4 @@
+from json import load
 from logging import INFO
 from logging import basicConfig
 from logging import getLogger
@@ -6,7 +7,6 @@ from time import time
 from tweepy import API
 from tweepy import Cursor
 from tweepy import OAuthHandler
-from json import load
 
 # https://blog.f-secure.com/how-to-get-tweets-from-a-twitter-account-using-python-and-tweepy/
 if __name__ == '__main__':
