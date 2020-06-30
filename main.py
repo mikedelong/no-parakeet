@@ -16,5 +16,9 @@ if __name__ == '__main__':
     with open(file='./settings.json', mode='r', ) as settings_fp:
         settings = load(fp=settings_fp, )
     logger.info('settings: {}'.format(settings))
+    api_key = settings['api_key']
+    logger.info('API key: {}'.format(api_key))
+    api_secret_key = settings['api_secret_key']
+    logger.info('secret key: {}'.format(api_secret_key))
 
     logger.info('total time: {:5.2f}s'.format(time() - time_start))
