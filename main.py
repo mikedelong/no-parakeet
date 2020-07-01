@@ -8,6 +8,8 @@ from tweepy import API
 from tweepy import Cursor
 from tweepy import OAuthHandler
 
+from datetime import timedelta
+from datetime import datetime
 # https://blog.f-secure.com/how-to-get-tweets-from-a-twitter-account-using-python-and-tweepy/
 if __name__ == '__main__':
     time_start = time()
@@ -43,4 +45,33 @@ if __name__ == '__main__':
         logger.info("statuses_count: " + str(value.statuses_count))
         logger.info("friends_count: " + str(value.friends_count))
         logger.info("followers_count: " + str(value.followers_count))
+
+        # now get some tweets from this user and list hash tags
+        hashtags = []
+        mentions = []
+        tweet_count = 0
+        end_date = datetime.now() - timedelta(days=30)
+        for status in Cursor(interface.user_timeline, id=user).items():
+            tweet_count += 1
+            if hasattr(status, 'entities'):
+                entities = status.entities
+                if 'hashtags' in entities:
+                    for ent in entities['hashtags']:
+                        if ent is not None:
+                            if "text" in ent:
+                                hashtag = ent['text']
+                                if hashtag is not None:
+                                    hashtags.append(hashtag)
+                if "user_mentions" in entities:
+                    for ent in entities['user_mentions']:
+                        if ent is not None:
+                            if "screen_name" in ent:
+                                name = ent['screen_name']
+                                if name is not None:
+                                    mentions.append(name)
+            if status.created_at < end_date:
+                break
+        logger.info('hashtags: {}'.format(hashtags))
+        logger.info('mentions: {}'.format(mentions))
+
     logger.info('total time: {:5.2f}s'.format(time() - time_start))
