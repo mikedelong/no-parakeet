@@ -52,25 +52,24 @@ if __name__ == '__main__':
         tweet_count = 0
         end_date = datetime.now() - timedelta(days=30)
         for status in Cursor(interface.user_timeline, id=user).items():
-            tweet_count += 1
-            if hasattr(status, 'entities'):
-                entities = dict(status.entities)
-                if 'hashtags' in entities:
-                    for entity in entities['hashtags']:
-                        if entity is not None:
-                            if 'text' in entity:
-                                hashtag = entity['text']
-                                if hashtag is not None:
-                                    hashtags.append(hashtag)
-                if 'user_mentions' in entities:
-                    for entity in entities['user_mentions']:
-                        if entity is not None:
-                            if 'screen_name' in entity:
-                                name = entity['screen_name']
-                                if name is not None:
-                                    mentions.append(name)
-            if status.created_at < end_date:
-                break
+            if status.created_at > end_date:
+                tweet_count += 1
+                if hasattr(status, 'entities'):
+                    entities = dict(status.entities)
+                    if 'hashtags' in entities:
+                        for entity in entities['hashtags']:
+                            if entity is not None:
+                                if 'text' in entity:
+                                    hashtag = entity['text']
+                                    if hashtag is not None:
+                                        hashtags.append(hashtag)
+                    if 'user_mentions' in entities:
+                        for entity in entities['user_mentions']:
+                            if entity is not None:
+                                if 'screen_name' in entity:
+                                    name = entity['screen_name']
+                                    if name is not None:
+                                        mentions.append(name)
         logger.info('hashtags: {}'.format(hashtags))
         logger.info('mentions: {}'.format(mentions))
 
