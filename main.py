@@ -54,7 +54,7 @@ if __name__ == '__main__':
         for status in Cursor(interface.user_timeline, id=user).items():
             tweet_count += 1
             if hasattr(status, 'entities'):
-                entities = status.entities
+                entities = dict(status.entities)
                 if 'hashtags' in entities:
                     for entity in entities['hashtags']:
                         if entity is not None:
