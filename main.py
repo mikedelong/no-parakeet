@@ -56,17 +56,17 @@ if __name__ == '__main__':
             if hasattr(status, 'entities'):
                 entities = status.entities
                 if 'hashtags' in entities:
-                    for ent in entities['hashtags']:
-                        if ent is not None:
-                            if "text" in ent:
-                                hashtag = ent['text']
+                    for entity in entities['hashtags']:
+                        if entity is not None:
+                            if 'text' in entity:
+                                hashtag = entity['text']
                                 if hashtag is not None:
                                     hashtags.append(hashtag)
-                if "user_mentions" in entities:
-                    for ent in entities['user_mentions']:
-                        if ent is not None:
-                            if "screen_name" in ent:
-                                name = ent['screen_name']
+                if 'user_mentions' in entities:
+                    for entity in entities['user_mentions']:
+                        if entity is not None:
+                            if 'screen_name' in entity:
+                                name = entity['screen_name']
                                 if name is not None:
                                     mentions.append(name)
             if status.created_at < end_date:
