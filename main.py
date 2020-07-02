@@ -1,3 +1,6 @@
+from collections import Counter
+from datetime import datetime
+from datetime import timedelta
 from json import load
 from logging import INFO
 from logging import basicConfig
@@ -7,11 +10,6 @@ from time import time
 from tweepy import API
 from tweepy import Cursor
 from tweepy import OAuthHandler
-
-from datetime import timedelta
-from datetime import datetime
-
-from collections import Counter
 
 # https://blog.f-secure.com/how-to-get-tweets-from-a-twitter-account-using-python-and-tweepy/
 if __name__ == '__main__':
