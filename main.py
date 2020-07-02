@@ -72,7 +72,9 @@ if __name__ == '__main__':
                                     if name is not None:
                                         mentions.append(name)
         logger.info('hashtags: {}'.format(hashtags, ), )
-        logger.info('most common hashtags: {}'.format(Counter(hashtags).most_common(5, ), ), )
+
+        logger.info('most common hashtags: {}'.format(
+            {key: count for key, count in Counter(hashtags).items() if count > 1}, ), )
         logger.info('mentions: {}'.format(mentions, ), )
         logger.info('most common mentions: {}'.format(Counter(mentions).most_common(5, ), ), )
 
