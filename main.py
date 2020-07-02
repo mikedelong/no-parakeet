@@ -74,5 +74,6 @@ if __name__ == '__main__':
         logger.info('hashtags: {}'.format(hashtags, ), )
         logger.info('most common hashtags: {}'.format(Counter(hashtags).most_common(5, ), ), )
         logger.info('mentions: {}'.format(mentions, ), )
+        logger.info('most common mentions: {}'.format(Counter(mentions).most_common(5, ), ), )
 
     logger.info('total time: {:5.2f}s'.format(time() - time_start))
