@@ -10,6 +10,9 @@ from tweepy import OAuthHandler
 
 from datetime import timedelta
 from datetime import datetime
+
+from collections import Counter
+
 # https://blog.f-secure.com/how-to-get-tweets-from-a-twitter-account-using-python-and-tweepy/
 if __name__ == '__main__':
     time_start = time()
@@ -70,7 +73,8 @@ if __name__ == '__main__':
                                     name = entity['screen_name']
                                     if name is not None:
                                         mentions.append(name)
-        logger.info('hashtags: {}'.format(hashtags))
-        logger.info('mentions: {}'.format(mentions))
+        logger.info('hashtags: {}'.format(hashtags, ), )
+        logger.info('most common hashtags: {}'.format(Counter(hashtags).most_common(5, ), ), )
+        logger.info('mentions: {}'.format(mentions, ), )
 
     logger.info('total time: {:5.2f}s'.format(time() - time_start))
