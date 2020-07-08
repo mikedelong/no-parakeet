@@ -76,6 +76,9 @@ if __name__ == '__main__':
         repeats = {key: count for key, count in Counter(tags).items() if count > 1}
         logger.info('most common {}: {}'.format(tag_key, repeats, ), )
         logger.info('mentions: {}'.format(mentions, ), )
-        logger.info('most common mentions: {}'.format(Counter(mentions).most_common(5, ), ), )
+        mention_count = Counter(mentions)
+        total_mentions = sum([value for value in dict(mention_count).values()])
+        logger.info('most common mentions: {}'.format({key: count for key, count in dict(mention_count).items()
+                                                       if count > total_mentions/100.0}, ), )
 
     logger.info('total time: {:5.2f}s'.format(time() - time_start))
