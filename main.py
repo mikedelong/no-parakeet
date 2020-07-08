@@ -48,22 +48,23 @@ if __name__ == '__main__':
         logger.info("followers_count: " + str(value.followers_count))
 
         # now get some tweets from this user and list hash tags
-        hashtags = []
+        tags = []
         mentions = []
         tweet_count = 0
         end_date = datetime.now() - timedelta(days=30)
+        tag_key = 'hash''tags'
         for status in Cursor(interface.user_timeline, id=user).items():
             if status.created_at > end_date:
                 tweet_count += 1
                 if hasattr(status, 'entities'):
                     entities = dict(status.entities)
-                    if 'hashtags' in entities:
-                        for entity in entities['hashtags']:
+                    if tag_key in entities:
+                        for entity in entities[tag_key]:
                             if entity is not None:
                                 if 'text' in entity:
                                     hashtag = entity['text']
                                     if hashtag is not None:
-                                        hashtags.append(hashtag)
+                                        tags.append(hashtag)
                     if 'user_mentions' in entities:
                         for entity in entities['user_mentions']:
                             if entity is not None:
@@ -71,10 +72,9 @@ if __name__ == '__main__':
                                     name = entity['screen_name']
                                     if name is not None:
                                         mentions.append(name)
-        logger.info('hashtags: {}'.format(hashtags, ), )
-
-        logger.info('most common hashtags: {}'.format(
-            {key: count for key, count in Counter(hashtags).items() if count > 1}, ), )
+        logger.info('{}: {}'.format(tag_key, tags, ), )
+        repeats = {key: count for key, count in Counter(tags).items() if count > 1}
+        logger.info('most common {}: {}'.format(tag_key, repeats, ), )
         logger.info('mentions: {}'.format(mentions, ), )
         logger.info('most common mentions: {}'.format(Counter(mentions).most_common(5, ), ), )
 
