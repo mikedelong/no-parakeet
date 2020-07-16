@@ -46,12 +46,9 @@ if __name__ == '__main__':
     do_user = True
     if do_user:
         name, screen_name, description, statuses_count, friends_count, followers_count = get_user_data(user)
-        logger.info('name: {}'.format(name))
-        logger.info('screen_name: ' + screen_name)
-        logger.info('description: ' + description)
-        logger.info('statuses_count: ' + str(statuses_count))
-        logger.info('friends_count: ' + str(friends_count))
-        logger.info('followers_count: ' + str(followers_count))
+        logger.info('name: {} screen name: {}'.format(name, screen_name, ))
+        logger.info('description: {}'.format(description, ))
+        logger.info('statuses: {} friends: {} followers: {}'.format(statuses_count, friends_count, followers_count, ))
 
         # now get some tweets from this user and list hash tags
         tags = []
