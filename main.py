@@ -44,7 +44,6 @@ if __name__ == '__main__':
             logger.info(value)
 
     do_user = True
-    # todo factor this out into a function
     if do_user:
         name, screen_name, description, statuses_count, friends_count, followers_count = get_user_data(user)
         logger.info("name: " + name)
