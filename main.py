@@ -11,6 +11,12 @@ from tweepy import API
 from tweepy import Cursor
 from tweepy import OAuthHandler
 
+
+def get_user_data(arg):
+    this = API(auth_handler=authorization, ).get_user(arg)
+    return this.name, this.screen_name, this.description, this.statuses_count, this.friends_count, this.followers_count
+
+
 # https://blog.f-secure.com/how-to-get-tweets-from-a-twitter-account-using-python-and-tweepy/
 if __name__ == '__main__':
     time_start = time()
@@ -40,13 +46,13 @@ if __name__ == '__main__':
     do_user = True
     # todo factor this out into a function
     if do_user:
-        value = API(auth_handler=authorization, ).get_user(user)
-        logger.info("name: " + value.name)
-        logger.info("screen_name: " + value.screen_name)
-        logger.info("description: " + value.description)
-        logger.info("statuses_count: " + str(value.statuses_count))
-        logger.info("friends_count: " + str(value.friends_count))
-        logger.info("followers_count: " + str(value.followers_count))
+        name, screen_name, description, statuses_count, friends_count, followers_count = get_user_data(user)
+        logger.info("name: " + name)
+        logger.info("screen_name: " + screen_name)
+        logger.info("description: " + description)
+        logger.info("statuses_count: " + str(statuses_count))
+        logger.info("friends_count: " + str(friends_count))
+        logger.info("followers_count: " + str(followers_count))
 
         # now get some tweets from this user and list hash tags
         tags = []
