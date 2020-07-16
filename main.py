@@ -38,6 +38,7 @@ if __name__ == '__main__':
             logger.info(value)
 
     do_user = True
+    # todo factor this out into a function
     if do_user:
         value = API(auth_handler=authorization, ).get_user(user)
         logger.info("name: " + value.name)
