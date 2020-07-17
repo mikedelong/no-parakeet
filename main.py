@@ -19,10 +19,9 @@ def get_user_data(arg):
     return this.name, this.screen_name, this.description, this.statuses_count, this.friends_count, this.followers_count
 
 
-def get_connections(arg):
+def get_connections(arg, end_date):
     result_tags = []
     result_mentions = []
-    end_date = datetime.now() - timedelta(days=30)
     for status in Cursor(interface.user_timeline, id=arg).items():
         if status.created_at > end_date:
             if hasattr(status, 'entities'):
@@ -78,7 +77,7 @@ if __name__ == '__main__':
         logger.info('statuses: {} friends: {} followers: {}'.format(statuses_count, friends_count, followers_count, ))
 
         # now get some tweets from this user and list hash tags
-        tags, mentions = get_connections(user)
+        tags, mentions = get_connections(user, datetime.now() - timedelta(days=30), )
         logger.info('{}: {}'.format(TAG_KEY, tags, ), )
         repeats = {key: count for key, count in Counter(tags).items() if count > 1}
         logger.info('most common {}: {}'.format(TAG_KEY, repeats, ), )
