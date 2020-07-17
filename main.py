@@ -51,6 +51,7 @@ if __name__ == '__main__':
         logger.info('statuses: {} friends: {} followers: {}'.format(statuses_count, friends_count, followers_count, ))
 
         # now get some tweets from this user and list hash tags
+        # todo factor this out as a function
         tags = []
         mentions = []
         tweet_count = 0
