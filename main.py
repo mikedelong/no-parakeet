@@ -20,9 +20,8 @@ def get_user_data(arg):
 
 
 def get_connections(arg):
-    # global tags, mentions, tag_key, entities, name
-    tags = []
-    mentions = []
+    result_tags = []
+    result_mentions = []
     end_date = datetime.now() - timedelta(days=30)
     for status in Cursor(interface.user_timeline, id=arg).items():
         if status.created_at > end_date:
@@ -34,15 +33,15 @@ def get_connections(arg):
                             if 'text' in entity:
                                 hashtag = entity['text']
                                 if hashtag is not None:
-                                    tags.append(hashtag)
+                                    result_tags.append(hashtag)
                 if 'user_mentions' in entities:
                     for entity in entities['user_mentions']:
                         if entity is not None:
                             if 'screen_name' in entity:
                                 name = entity['screen_name']
                                 if name is not None:
-                                    mentions.append(name)
-    return tags, mentions
+                                    result_mentions.append(name)
+    return result_tags, result_mentions
 
 
 # https://blog.f-secure.com/how-to-get-tweets-from-a-twitter-account-using-python-and-tweepy/
