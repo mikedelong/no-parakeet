@@ -11,10 +11,40 @@ from tweepy import API
 from tweepy import Cursor
 from tweepy import OAuthHandler
 
+tag_key = 'hash''tags'
+
 
 def get_user_data(arg):
     this = API(auth_handler=authorization, ).get_user(arg)
     return this.name, this.screen_name, this.description, this.statuses_count, this.friends_count, this.followers_count
+
+
+def get_connections(arg):
+    # global tags, mentions, tag_key, entities, name
+    tags = []
+    mentions = []
+    tweet_count = 0
+    end_date = datetime.now() - timedelta(days=30)
+    for status in Cursor(interface.user_timeline, id=arg).items():
+        if status.created_at > end_date:
+            tweet_count += 1
+            if hasattr(status, 'entities'):
+                entities = dict(status.entities)
+                if tag_key in entities:
+                    for entity in entities[tag_key]:
+                        if entity is not None:
+                            if 'text' in entity:
+                                hashtag = entity['text']
+                                if hashtag is not None:
+                                    tags.append(hashtag)
+                if 'user_mentions' in entities:
+                    for entity in entities['user_mentions']:
+                        if entity is not None:
+                            if 'screen_name' in entity:
+                                name = entity['screen_name']
+                                if name is not None:
+                                    mentions.append(name)
+    return tags, mentions
 
 
 # https://blog.f-secure.com/how-to-get-tweets-from-a-twitter-account-using-python-and-tweepy/
@@ -52,30 +82,7 @@ if __name__ == '__main__':
 
         # now get some tweets from this user and list hash tags
         # todo factor this out as a function
-        tags = []
-        mentions = []
-        tweet_count = 0
-        end_date = datetime.now() - timedelta(days=30)
-        tag_key = 'hash''tags'
-        for status in Cursor(interface.user_timeline, id=user).items():
-            if status.created_at > end_date:
-                tweet_count += 1
-                if hasattr(status, 'entities'):
-                    entities = dict(status.entities)
-                    if tag_key in entities:
-                        for entity in entities[tag_key]:
-                            if entity is not None:
-                                if 'text' in entity:
-                                    hashtag = entity['text']
-                                    if hashtag is not None:
-                                        tags.append(hashtag)
-                    if 'user_mentions' in entities:
-                        for entity in entities['user_mentions']:
-                            if entity is not None:
-                                if 'screen_name' in entity:
-                                    name = entity['screen_name']
-                                    if name is not None:
-                                        mentions.append(name)
+        tags, mentions = get_connections(user)
         logger.info('{}: {}'.format(tag_key, tags, ), )
         repeats = {key: count for key, count in Counter(tags).items() if count > 1}
         logger.info('most common {}: {}'.format(tag_key, repeats, ), )
