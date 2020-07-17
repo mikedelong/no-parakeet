@@ -11,7 +11,7 @@ from tweepy import API
 from tweepy import Cursor
 from tweepy import OAuthHandler
 
-tag_key = 'hash''tags'
+TAG_KEY = 'hash''tags'
 
 
 def get_user_data(arg):
@@ -30,8 +30,8 @@ def get_connections(arg):
             tweet_count += 1
             if hasattr(status, 'entities'):
                 entities = dict(status.entities)
-                if tag_key in entities:
-                    for entity in entities[tag_key]:
+                if TAG_KEY in entities:
+                    for entity in entities[TAG_KEY]:
                         if entity is not None:
                             if 'text' in entity:
                                 hashtag = entity['text']
@@ -82,9 +82,9 @@ if __name__ == '__main__':
 
         # now get some tweets from this user and list hash tags
         tags, mentions = get_connections(user)
-        logger.info('{}: {}'.format(tag_key, tags, ), )
+        logger.info('{}: {}'.format(TAG_KEY, tags, ), )
         repeats = {key: count for key, count in Counter(tags).items() if count > 1}
-        logger.info('most common {}: {}'.format(tag_key, repeats, ), )
+        logger.info('most common {}: {}'.format(TAG_KEY, repeats, ), )
         logger.info('mentions: {}'.format(sorted(list(set(mentions), ), ), ), )
         mention_count = Counter(mentions)
         threshold = 0.005 * sum([value for value in dict(mention_count).values()])
