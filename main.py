@@ -38,9 +38,9 @@ def get_connections(arg):
                     for entity in entities['user_mentions']:
                         if entity is not None:
                             if 'screen_name' in entity:
-                                name = entity['screen_name']
-                                if name is not None:
-                                    result_mentions.append(name)
+                                local_name = entity['screen_name']
+                                if local_name is not None:
+                                    result_mentions.append(local_name)
     return result_tags, result_mentions
 
 
