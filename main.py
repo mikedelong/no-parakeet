@@ -23,11 +23,9 @@ def get_connections(arg):
     # global tags, mentions, tag_key, entities, name
     tags = []
     mentions = []
-    tweet_count = 0
     end_date = datetime.now() - timedelta(days=30)
     for status in Cursor(interface.user_timeline, id=arg).items():
         if status.created_at > end_date:
-            tweet_count += 1
             if hasattr(status, 'entities'):
                 entities = dict(status.entities)
                 if TAG_KEY in entities:
