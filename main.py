@@ -58,6 +58,7 @@ if __name__ == '__main__':
     logger.info('secret key: {}'.format(api_secret_key, ), )
     hash_tag = settings['hash_tag']
     user = settings['user']
+    left = settings['left']
 
     authorization = OAuthHandler(consumer_key=api_key, consumer_secret=api_secret_key, )
     interface = API(auth_handler=authorization, wait_on_rate_limit=True, )
