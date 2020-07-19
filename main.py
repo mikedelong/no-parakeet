@@ -59,6 +59,7 @@ if __name__ == '__main__':
     hash_tag = settings['hash_tag']
     user = settings['user']
     left = settings['left']
+    right = settings['right']
 
     authorization = OAuthHandler(consumer_key=api_key, consumer_secret=api_secret_key, )
     interface = API(auth_handler=authorization, wait_on_rate_limit=True, )
