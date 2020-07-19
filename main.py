@@ -91,4 +91,8 @@ if __name__ == '__main__':
         percentage_mentions = {key: count for key, count in dict(mention_count).items() if count >= threshold}
         logger.info('most common mentions: {}'.format(percentage_mentions, ), )
 
+    do_user_compare = True
+    if do_user_compare:
+        pass
+
     logger.info('total time: {:5.2f}s'.format(time() - time_start))
