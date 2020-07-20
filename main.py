@@ -94,7 +94,11 @@ if __name__ == '__main__':
     do_user_compare = True
     if do_user_compare:
         days = 30
+        logger.info('getting data for {}'.format(left))
         left_tags, left_mentions = get_connections(left, datetime.now() - timedelta(days=days), )
+        logger.info('getting data for {}'.format(right))
         right_tags, right_mentions = get_connections(right, datetime.now() - timedelta(days=days), )
+        common_mentions = [item for item in left_mentions if item in right_mentions]
+        logger.info('common mentions: {}'.format(common_mentions))
 
     logger.info('total time: {:5.2f}s'.format(time() - time_start))
