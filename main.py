@@ -93,7 +93,8 @@ if __name__ == '__main__':
 
     do_user_compare = True
     if do_user_compare:
-        left_tags, left_mentions = get_connections(left, datetime.now() - timedelta(days=30), )
-        right_tags, right_mentions = get_connections(right, datetime.now() - timedelta(days=30), )
+        days = 30
+        left_tags, left_mentions = get_connections(left, datetime.now() - timedelta(days=days), )
+        right_tags, right_mentions = get_connections(right, datetime.now() - timedelta(days=days), )
 
     logger.info('total time: {:5.2f}s'.format(time() - time_start))
