@@ -97,7 +97,6 @@ if __name__ == '__main__':
         percentage_mentions = {key: count for key, count in dict(mention_count).items() if count >= threshold}
         logger.info('most common mentions: {}'.format(percentage_mentions, ), )
 
-    # todo make this a setting
     if 'user_compare' in functions:
         days = 30
         logger.info('getting {} days of data for {}'.format(days, left))
