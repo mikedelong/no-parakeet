@@ -79,8 +79,7 @@ if __name__ == '__main__':
             logger.info(value)
 
     # todo make this a setting
-    do_user = False
-    if do_user:
+    if 'user' in functions:
         name, screen_name, description, statuses_count, friends_count, followers_count = get_user_data(user)
         logger.info('name: {} screen name: {}'.format(name, screen_name, ))
         logger.info('description: {}'.format(description, ))
