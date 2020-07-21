@@ -56,6 +56,12 @@ if __name__ == '__main__':
     logger.info('API key: {}'.format(api_key, ), )
     api_secret_key = settings['api_secret_key']
     logger.info('secret key: {}'.format(api_secret_key, ), )
+    functions = list()
+    if 'functions' in settings.keys():
+        functions = settings['functions']
+        logger.info('functions: {}'.format(functions))
+    else:
+        logger.warning('functions not specified in settings; no default function')
     hash_tag = settings['hash_tag']
     left = settings['left']
     right = settings['right']
