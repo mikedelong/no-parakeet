@@ -91,12 +91,13 @@ if __name__ == '__main__':
         percentage_mentions = {key: count for key, count in dict(mention_count).items() if count >= threshold}
         logger.info('most common mentions: {}'.format(percentage_mentions, ), )
 
+    # todo make this a setting
     do_user_compare = True
     if do_user_compare:
         days = 30
-        logger.info('getting {} days of  data for {}'.format(days, left))
+        logger.info('getting {} days of data for {}'.format(days, left))
         left_tags, left_mentions = get_connections(left, datetime.now() - timedelta(days=days), )
-        logger.info('getting {} days of  data for {}'.format(days, right))
+        logger.info('getting {} days of data for {}'.format(days, right))
         right_tags, right_mentions = get_connections(right, datetime.now() - timedelta(days=days), )
         common_mentions = [item for item in left_mentions if item in right_mentions]
         logger.info('common mentions: {}'.format(Counter(common_mentions)))
