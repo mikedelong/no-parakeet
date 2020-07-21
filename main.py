@@ -97,6 +97,7 @@ if __name__ == '__main__':
         logger.info('most common mentions: {}'.format(percentage_mentions, ), )
 
     if 'user_compare' in functions:
+        # todo make this a setting
         days = 30
         logger.info('getting {} days of data for {}'.format(days, left))
         left_tags, left_mentions = get_connections(left, datetime.now() - timedelta(days=days), )
