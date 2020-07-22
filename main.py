@@ -56,6 +56,11 @@ if __name__ == '__main__':
     logger.info('API key: {}'.format(api_key, ), )
     api_secret_key = settings['api_secret_key']
     logger.info('secret key: {}'.format(api_secret_key, ), )
+    days = settings['days'] if 'days' in settings.keys() else 15
+    if 'days' in settings.keys():
+        logger.info('look back is {} days'.format(days))
+    else:
+        logger.warning('parameter days is missing; using default value {}'.format(days))
     functions = list()
     if 'functions' in settings.keys():
         functions = settings['functions']
