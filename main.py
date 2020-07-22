@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
     # get some tweets using a hash tag
     # todo make this a setting
-    if hash_tag in functions:
+    if TAG_KEY in functions:
         values = Cursor(interface.search, q=hash_tag, ).items(10)
         for value in values:
             logger.info(value)
