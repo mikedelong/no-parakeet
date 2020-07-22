@@ -76,7 +76,6 @@ if __name__ == '__main__':
         for value in values:
             logger.info(value)
 
-    # todo make this a setting
     if 'user' in functions:
         name, screen_name, description, statuses_count, friends_count, followers_count = get_user_data(user)
         logger.info('name: {} screen name: {}'.format(name, screen_name, ))
