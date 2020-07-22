@@ -71,7 +71,6 @@ if __name__ == '__main__':
     interface = API(auth_handler=authorization, wait_on_rate_limit=True, )
 
     # get some tweets using a hash tag
-    # todo make this a setting
     if TAG_KEY in functions:
         values = Cursor(interface.search, q=hash_tag, ).items(10)
         for value in values:
