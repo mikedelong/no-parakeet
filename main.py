@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
         # now get some tweets from this user and list hash tags
         # todo make days a variable/setting
-        tags, mentions = get_connections(user, datetime.now() - timedelta(days=30), )
+        tags, mentions = get_connections(user, datetime.now() - timedelta(days=days, ), )
         logger.info('{}: {}'.format(TAG_KEY, tags, ), )
         repeats = {key: count for key, count in Counter(tags).items() if count > 1}
         logger.info('most common {}: {}'.format(TAG_KEY, repeats, ), )
