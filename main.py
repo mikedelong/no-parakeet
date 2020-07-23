@@ -61,11 +61,11 @@ if __name__ == '__main__':
         logger.info('look back is {} days'.format(days))
     else:
         logger.warning('parameter days is missing; using default value {}'.format(days))
-    functions = list()
     if 'functions' in settings.keys():
         functions = settings['functions']
         logger.info('functions: {}'.format(functions))
     else:
+        functions = list()
         logger.warning('functions not specified in settings; no default function')
     hash_tag = settings['hash_tag']
     left = settings['left']
