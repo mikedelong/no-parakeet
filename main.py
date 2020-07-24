@@ -1,10 +1,12 @@
 from collections import Counter
 from datetime import datetime
 from datetime import timedelta
+from json import dumps
 from json import load
 from logging import INFO
 from logging import basicConfig
 from logging import getLogger
+from pprint import pformat
 from time import time
 
 from tweepy import API
@@ -79,7 +81,8 @@ if __name__ == '__main__':
     if TAG_KEY in functions:
         values = Cursor(interface.search, q=hash_tag, ).items(10)
         for value in values:
-            logger.info(value)
+            value_json = dumps(value._json)
+            logger.info(pformat(value_json))
 
     if 'user' in functions:
         name, screen_name, description, statuses_count, friends_count, followers_count = get_user_data(user)
