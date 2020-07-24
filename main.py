@@ -68,6 +68,7 @@ if __name__ == '__main__':
         functions = list()
         logger.warning('functions not specified in settings; no default function')
     hash_tag = settings['hash_tag']
+    hash_tag_user_count = settings['hash_tag_user_count']
     left = settings['left']
     right = settings['right']
     user = settings['user']
@@ -77,9 +78,8 @@ if __name__ == '__main__':
 
     # get some tweets using a hash tag
     if TAG_KEY in functions:
-        limit = 25
-        logger.info('for {} we are looking at {} tweets'.format(TAG_KEY, limit, ))
-        values = Cursor(interface.search, q=hash_tag, ).items(limit=limit, )
+        logger.info('for {} we are looking at {} tweets'.format(TAG_KEY, hash_tag_user_count, ))
+        values = Cursor(interface.search, q=hash_tag, ).items(limit=hash_tag_user_count, )
         logger.info(Counter([value._json['user']['screen_name'] for value in values]))
 
     if 'user' in functions:
