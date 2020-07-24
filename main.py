@@ -80,8 +80,7 @@ if __name__ == '__main__':
         limit = 25
         logger.info('for {} we are looking at {} tweets'.format(TAG_KEY, limit, ))
         values = Cursor(interface.search, q=hash_tag, ).items(limit=limit, )
-        for index, value in enumerate(values):
-            logger.info('{} {}'.format(index, value._json['user']['screen_name']))
+        logger.info(Counter([value._json['user']['screen_name'] for value in values]))
 
     if 'user' in functions:
         name, screen_name, description, statuses_count, friends_count, followers_count = get_user_data(user)
