@@ -80,6 +80,8 @@ if __name__ == '__main__':
 
     savefig('./output/{}.png'.format(me.screen_name))
 
+    screen_names = dict()
+
     for id_ in df['target'].to_list():
         logger.info('processing id: %s', id_)
         followers = []
@@ -87,10 +89,9 @@ if __name__ == '__main__':
 
         # fetch the user
         user = api.get_user(user_id=id_)
-
+        screen_names[id_] = user.screen_name
         # fetching the followers_count
         followers_count = user.followers_count
-
         try:
             for page in Cursor(api.get_follower_ids, user_id=id_).pages():
                 followers.extend(page)
@@ -101,11 +102,7 @@ if __name__ == '__main__':
             logger.warning(tweepy_exception)
             continue
         follower_list.append(followers)
-        # todo roll these up into a single call
-        temp = DataFrame(columns=['source', 'target'])
-        temp['target'] = follower_list[0]
-        temp['source'] = id_
-        df = concat([df, temp])
+        df = concat([df, DataFrame(data={'source': id_, 'target': follower_list[0]})])
         output_file = './output/{}.csv'.format(me.screen_name)
         df.to_csv(path_or_buf=output_file)
         do_load = False
@@ -116,7 +113,7 @@ if __name__ == '__main__':
         logger.info('node count: %d', G.number_of_nodes())
         G_sorted = DataFrame(sorted(G.degree, key=lambda x: x[1], reverse=True))
         G_sorted.columns = ['nconst', 'degree']
-        logger.info(G_sorted.head())
+        logger.info(G_sorted.head().to_dict())
         G_tmp = k_core(G, 3)  # Exclude nodes with degree less than 10
 
         # todo roll these up
@@ -127,10 +124,11 @@ if __name__ == '__main__':
 
         G_sorted = DataFrame(sorted(G_tmp.degree, key=lambda x: x[1], reverse=True), columns=['names', 'degree'])
         # G_sorted.columns =
-        logger.info(G_sorted.head())
+        logger.info(G_sorted.head().to_dict())
         dc = G_sorted
         combined = merge(dc, partition, how='left', left_on='names', right_on='names')
 
+        # todo label the nodes with user names instead of IDs
         pos = spring_layout(G_tmp)
         f, ax = subplots(figsize=(10, 10))
         style.use('ggplot')
