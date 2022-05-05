@@ -129,7 +129,7 @@ if __name__ == '__main__':
         # G_sorted.columns =
         logger.info(G_sorted.head())
         dc = G_sorted
-        combined = merge(dc, partition1, how='left', left_on='names', right_on='names')
+        combined = merge(dc, partition, how='left', left_on='names', right_on='names')
 
         pos = spring_layout(G_tmp)
         f, ax = subplots(figsize=(10, 10))
