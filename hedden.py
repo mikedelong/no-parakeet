@@ -47,6 +47,7 @@ if __name__ == '__main__':
                                  access_token_secret=access_token_secret)
     api = API(auth=authorization, wait_on_rate_limit=True)
 
+    # todo move this to data/settings
     screen_names = ['BathCounty', 'gohikevirginia', 'MyBristolVisit', 'SteveHedden']
     me = api.get_user(screen_name=screen_names[0])
     logger.info('ID: %d %s screen name: %s', me.id, me.id_str, me.name)
