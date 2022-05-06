@@ -33,7 +33,7 @@ if __name__ == '__main__':
     logger = getLogger(__name__)
     basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=INFO, )
     logger.info('started.', )
-    with open(file='./settings.json', mode='r', ) as settings_fp:
+    with open(file='./hedden_settings.json', mode='r', ) as settings_fp:
         settings = load(fp=settings_fp, )
     logger.info('settings: {}'.format(settings))
     api_key = settings['api_key']
@@ -42,14 +42,13 @@ if __name__ == '__main__':
     logger.info('secret key: {}'.format(api_secret_key, ), )
     access_token = settings['access_token']
     access_token_secret = settings['access_token_secret']
+    follower_count_cutoff = settings['follower_count_cutoff']
 
     authorization = OAuthHandler(consumer_key=api_key, consumer_secret=api_secret_key, access_token=access_token,
                                  access_token_secret=access_token_secret)
     api = API(auth=authorization, wait_on_rate_limit=True)
 
-    # todo move this to data/settings
-    screen_names = ['BathCounty', 'gohikevirginia', 'MyBristolVisit', 'SteveHedden']
-    me = api.get_user(screen_name=screen_names[0])
+    me = api.get_user(screen_name=settings['screen_names'][settings['screen_name_index']])
     logger.info('ID: %d %s screen name: %s', me.id, me.id_str, me.name)
     user_list = [me.id_str]
     follower_list = []
@@ -96,7 +95,7 @@ if __name__ == '__main__':
             for page in Cursor(api.get_follower_ids, user_id=id_).pages():
                 followers.extend(page)
                 logger.info('follower count: %s', len(followers))
-                if followers_count >= 500:  # Only take first 5000 followers
+                if followers_count >= 500:  # truncate the followers
                     break
         except TweepyException as tweepy_exception:
             logger.warning(tweepy_exception)
@@ -114,7 +113,7 @@ if __name__ == '__main__':
         G_sorted = DataFrame(sorted(G.degree, key=lambda x: x[1], reverse=True))
         G_sorted.columns = ['nconst', 'degree']
         logger.info(G_sorted.head().to_dict())
-        G_tmp = k_core(G, 3)  # Exclude nodes with degree less than 10
+        G_tmp = k_core(G, 4)  # Exclude nodes with degree less than 10
 
         # todo roll these up
         # Turn partition into dataframe
