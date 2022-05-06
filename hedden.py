@@ -95,7 +95,7 @@ if __name__ == '__main__':
             for page in Cursor(api.get_follower_ids, user_id=id_).pages():
                 followers.extend(page)
                 logger.info('follower count: %s', len(followers))
-                if followers_count >= 500:  # truncate the followers
+                if followers_count >= follower_count_cutoff:  # truncate the followers
                     break
         except TweepyException as tweepy_exception:
             logger.warning(tweepy_exception)
