@@ -4,27 +4,25 @@ from logging import basicConfig
 from logging import getLogger
 from time import time
 
+from community import community_louvain
+from matplotlib.pyplot import cm
+from matplotlib.pyplot import savefig
+from matplotlib.pyplot import style
+from matplotlib.pyplot import subplots
+from networkx import draw_networkx_edges
+from networkx import draw_networkx_labels
+from networkx import draw_networkx_nodes
 from networkx import from_pandas_edgelist
+from networkx import k_core
 from networkx import spring_layout
 from pandas import DataFrame
+from pandas import concat
+from pandas import merge
+from pandas import read_csv
 from tweepy import API
 from tweepy import Cursor
 from tweepy import OAuthHandler
 from tweepy import TweepyException
-
-from matplotlib.pyplot import style
-from matplotlib.pyplot import subplots
-
-from networkx import draw_networkx_edges
-from networkx import draw_networkx_labels
-from networkx import draw_networkx_nodes
-from matplotlib.pyplot import savefig
-from pandas import concat
-from pandas import read_csv
-from networkx import k_core
-from community import community_louvain
-from pandas import merge
-from matplotlib.pyplot import cm
 
 # https://towardsdatascience.com/how-to-download-and-visualize-your-twitter-network-f009dbbf107b
 
@@ -122,19 +120,25 @@ if __name__ == '__main__':
         partition.columns = ['names', 'group']
 
         G_sorted = DataFrame(sorted(G_tmp.degree, key=lambda x: x[1], reverse=True), columns=['names', 'degree'])
-        # G_sorted.columns =
         logger.info(G_sorted.head().to_dict())
         dc = G_sorted
         combined = merge(dc, partition, how='left', left_on='names', right_on='names')
 
         # todo label the nodes with user names instead of IDs
-        pos = spring_layout(G_tmp)
-        f, ax = subplots(figsize=(10, 10))
-        style.use('ggplot')
-        nodes = draw_networkx_nodes(G_tmp, pos, cmap=cm.Set1, node_color=combined['group'], alpha=0.8)
-        nodes.set_edgecolor('k')
-        draw_networkx_labels(G_tmp, pos, font_size=8)
-        draw_networkx_edges(G_tmp, pos, width=1.0, alpha=0.2)
-        savefig('./output/{}-clustered.png'.format(me.screen_name))
+        graph_package = 'plotly'
+
+        if graph_package == 'matplotlib':
+            pos = spring_layout(G_tmp)
+            f, ax = subplots(figsize=(10, 10))
+            style.use('ggplot')
+            nodes = draw_networkx_nodes(G_tmp, pos, cmap=cm.Set1, node_color=combined['group'], alpha=0.8)
+            nodes.set_edgecolor('k')
+            draw_networkx_labels(G_tmp, pos, font_size=8)
+            draw_networkx_edges(G_tmp, pos, width=1.0, alpha=0.2)
+            savefig('./output/{}-clustered.png'.format(me.screen_name))
+        elif graph_package == 'plotly':
+            raise NotImplemented(graph_package)
+        else:
+            raise NotImplemented(graph_package)
 
     logger.info('total time: {:5.2f}s'.format(time() - time_start))
