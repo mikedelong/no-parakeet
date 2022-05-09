@@ -27,6 +27,9 @@ from tweepy import Cursor
 from tweepy import OAuthHandler
 from tweepy import TweepyException
 
+COLORSCALE = ['Greys', 'YlGnBu', 'Greens', 'YlOrRd', 'Bluered', 'RdBu', 'Reds', 'Blues', 'Picnic', 'Rainbow',
+              'Portland', 'Jet', 'Hot', 'Blackbody', 'Earth', 'Electric', 'Viridis']
+
 # https://towardsdatascience.com/how-to-download-and-visualize-your-twitter-network-f009dbbf107b
 
 if __name__ == '__main__':
@@ -105,9 +108,6 @@ if __name__ == '__main__':
         df = concat([df, DataFrame(data={'source': id_, 'target': follower_list[0]})])
         output_file = './output/{}.csv'.format(me.screen_name)
         df.to_csv(path_or_buf=output_file)
-    do_load = False
-    if do_load:
-        df = read_csv(filepath_or_buffer=output_file)
     G = from_pandas_edgelist(df=df, source='source', target='target', edge_key=None, create_using=None,
                              edge_attr=None)
     logger.info('node count: %d', G.number_of_nodes())
@@ -156,11 +156,7 @@ if __name__ == '__main__':
             hoverinfo='text',
             marker=dict(
                 showscale=True,
-                # colorscale options
-                # 'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
-                # 'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
-                # 'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
-                colorscale='YlGnBu',
+                colorscale=COLORSCALE[1],
                 reversescale=True,
                 color=[],
                 size=10,
@@ -182,21 +178,21 @@ if __name__ == '__main__':
         node_trace.text = node_text
 
         fig = Figure(data=[edge_trace, node_trace],
-                        layout=Layout(
-                            title='<br>network graph',
-                            titlefont_size=16,
-                            showlegend=False,
-                            hovermode='closest',
-                            margin=dict(b=20, l=5, r=5, t=40),
-                            annotations=[dict(
-                                text="text",
-                                showarrow=False,
-                                xref="paper", yref="paper",
-                                x=0.005, y=-0.002)],
-                            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
-                        )
-        fig.show()
+                     layout=Layout(
+                         title='<br>network graph',
+                         titlefont_size=16,
+                         showlegend=False,
+                         hovermode='closest',
+                         margin=dict(b=20, l=5, r=5, t=40),
+                         annotations=[dict(
+                             text='text',
+                             showarrow=False,
+                             xref='paper', yref='paper',
+                             x=0.005, y=-0.002)],
+                         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+        fig.to_html('./output/{}.html'.format(me.screen_name))
+
     else:
         raise NotImplemented(graph_package)
 
