@@ -105,98 +105,99 @@ if __name__ == '__main__':
         df = concat([df, DataFrame(data={'source': id_, 'target': follower_list[0]})])
         output_file = './output/{}.csv'.format(me.screen_name)
         df.to_csv(path_or_buf=output_file)
-        do_load = False
-        if do_load:
-            df = read_csv(filepath_or_buffer=output_file)
-        G = from_pandas_edgelist(df=df, source='source', target='target', edge_key=None, create_using=None,
-                                 edge_attr=None)
-        logger.info('node count: %d', G.number_of_nodes())
-        G_sorted = DataFrame(sorted(G.degree, key=lambda x: x[1], reverse=True))
-        G_sorted.columns = ['nconst', 'degree']
-        logger.info(G_sorted.head().to_dict())
-        G_tmp = k_core(G, 4)  # Exclude nodes with degree less than 10
+    do_load = False
+    if do_load:
+        df = read_csv(filepath_or_buffer=output_file)
+    G = from_pandas_edgelist(df=df, source='source', target='target', edge_key=None, create_using=None,
+                             edge_attr=None)
+    logger.info('node count: %d', G.number_of_nodes())
+    G_sorted = DataFrame(sorted(G.degree, key=lambda x: x[1], reverse=True))
+    G_sorted.columns = ['nconst', 'degree']
+    logger.info(G_sorted.head().to_dict())
 
-        # todo roll these up
-        # Turn partition into dataframe
-        partition = DataFrame([community_louvain.best_partition(G_tmp)]).T
-        partition = partition.reset_index()
-        partition.columns = ['names', 'group']
+    G_tmp = k_core(G=G, k=3)
 
-        G_sorted = DataFrame(sorted(G_tmp.degree, key=lambda x: x[1], reverse=True), columns=['names', 'degree'])
-        logger.info(G_sorted.head().to_dict())
-        dc = G_sorted
-        combined = merge(dc, partition, how='left', left_on='names', right_on='names')
+    # todo roll these up
+    # Turn partition into dataframe
+    partition = DataFrame([community_louvain.best_partition(G_tmp)]).T
+    partition = partition.reset_index()
+    partition.columns = ['names', 'group']
 
-        # todo label the nodes with user names instead of IDs
-        graph_package = 'plotly'
+    G_sorted = DataFrame(sorted(G_tmp.degree, key=lambda x: x[1], reverse=True), columns=['names', 'degree'])
+    logger.info(G_sorted.head().to_dict())
+    dc = G_sorted
+    combined = merge(dc, partition, how='left', left_on='names', right_on='names')
 
-        if graph_package == 'matplotlib':
-            pos = spring_layout(G_tmp)
-            f, ax = subplots(figsize=(10, 10))
-            style.use('ggplot')
-            nodes = draw_networkx_nodes(G_tmp, pos, cmap=cm.Set1, node_color=combined['group'], alpha=0.8)
-            nodes.set_edgecolor('k')
-            draw_networkx_labels(G_tmp, pos, font_size=8)
-            draw_networkx_edges(G_tmp, pos, width=1.0, alpha=0.2)
-            savefig('./output/{}-clustered.png'.format(me.screen_name))
-        elif graph_package == 'plotly':
-            node_x = [edge[0] for edge in pos.values()]
-            node_y = [edge[1] for edge in pos.values()]
+    # todo label the nodes with user names instead of IDs
+    graph_package = 'plotly'
 
-            edge_trace = Scatter(
-                x=node_x, y=node_y,
-                line=dict(width=0.5, color='#888'),
-                hoverinfo='none',
-                mode='lines')
+    if graph_package == 'matplotlib':
+        pos = spring_layout(G_tmp)
+        f, ax = subplots(figsize=(10, 10))
+        style.use('ggplot')
+        nodes = draw_networkx_nodes(G_tmp, pos, cmap=cm.Set1, node_color=combined['group'], alpha=0.8)
+        nodes.set_edgecolor('k')
+        draw_networkx_labels(G_tmp, pos, font_size=8)
+        draw_networkx_edges(G_tmp, pos, width=1.0, alpha=0.2)
+        savefig('./output/{}-clustered.png'.format(me.screen_name))
+    elif graph_package == 'plotly':
+        node_x = [edge[0] for edge in pos.values()]
+        node_y = [edge[1] for edge in pos.values()]
 
-            node_trace = Scatter(
-                x=node_x, y=node_y,
-                mode='markers',
-                hoverinfo='text',
-                marker=dict(
-                    showscale=True,
-                    # colorscale options
-                    # 'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
-                    # 'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
-                    # 'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
-                    colorscale='YlGnBu',
-                    reversescale=True,
-                    color=[],
-                    size=10,
-                    colorbar=dict(
-                        thickness=15,
-                        title='Node Connections',
-                        xanchor='left',
-                        titleside='right'
-                    ),
-                    line_width=2))
+        edge_trace = Scatter(
+            x=node_x, y=node_y,
+            line=dict(width=0.5, color='#888'),
+            hoverinfo='none',
+            mode='lines')
 
-            node_adjacencies = []
-            node_text = []
-            for node, adjacencies in enumerate(G.adjacency()):
-                node_adjacencies.append(len(adjacencies[1]))
-                node_text.append('# of connections: ' + str(len(adjacencies[1])))
+        node_trace = Scatter(
+            x=node_x, y=node_y,
+            mode='markers',
+            hoverinfo='text',
+            marker=dict(
+                showscale=True,
+                # colorscale options
+                # 'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
+                # 'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
+                # 'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
+                colorscale='YlGnBu',
+                reversescale=True,
+                color=[],
+                size=10,
+                colorbar=dict(
+                    thickness=15,
+                    title='Node Connections',
+                    xanchor='left',
+                    titleside='right'
+                ),
+                line_width=2))
 
-            node_trace.marker.color = node_adjacencies
-            node_trace.text = node_text
+        node_adjacencies = []
+        node_text = []
+        for node, adjacencies in enumerate(G.adjacency()):
+            node_adjacencies.append(len(adjacencies[1]))
+            node_text.append('# of connections: ' + str(len(adjacencies[1])))
 
-            fig = Figure(data=[edge_trace, node_trace],
-                            layout=Layout(
-                                title='<br>network graph',
-                                titlefont_size=16,
-                                showlegend=False,
-                                hovermode='closest',
-                                margin=dict(b=20, l=5, r=5, t=40),
-                                annotations=[dict(
-                                    text="text",
-                                    showarrow=False,
-                                    xref="paper", yref="paper",
-                                    x=0.005, y=-0.002)],
-                                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
-                            )
-            fig.show()
-        else:
-            raise NotImplemented(graph_package)
+        node_trace.marker.color = node_adjacencies
+        node_trace.text = node_text
+
+        fig = Figure(data=[edge_trace, node_trace],
+                        layout=Layout(
+                            title='<br>network graph',
+                            titlefont_size=16,
+                            showlegend=False,
+                            hovermode='closest',
+                            margin=dict(b=20, l=5, r=5, t=40),
+                            annotations=[dict(
+                                text="text",
+                                showarrow=False,
+                                xref="paper", yref="paper",
+                                x=0.005, y=-0.002)],
+                            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
+                        )
+        fig.show()
+    else:
+        raise NotImplemented(graph_package)
 
     logger.info('total time: {:5.2f}s'.format(time() - time_start))
