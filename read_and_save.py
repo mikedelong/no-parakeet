@@ -8,6 +8,9 @@ from tweepy import API
 from tweepy import Cursor
 from tweepy import OAuthHandler
 from tweepy import TweepyException
+from json import dump
+from json import load
+from os.path import isfile
 
 if __name__ == '__main__':
     time_start = now()
@@ -24,6 +27,16 @@ if __name__ == '__main__':
     access_token = settings['access_token']
     access_token_secret = settings['access_token_secret']
     follower_count_cutoff = settings['follower_count_cutoff']
+    data_folder = settings['input_folder']
+    if not str(data_folder).endswith('/'):
+        data_folder += '/'
+    input_file = data_folder + settings['input_file']
+
+    if isfile(input_file):
+        with open(file=input_file, mode='r') as input_fp:
+            data = load(fp=input_fp)
+    else:
+        data = dict()
 
     authorization = OAuthHandler(consumer_key=api_key, consumer_secret=api_secret_key, access_token=access_token,
                                  access_token_secret=access_token_secret)
@@ -31,18 +44,17 @@ if __name__ == '__main__':
 
     me = api.get_user(screen_name=settings['screen_names'][settings['screen_name_index']])
     logger.info('ID: %d %s screen name: %s', me.id, me.id_str, me.name)
-    data = dict()
+
     # add the root user to the data
     data[me.id] = {
         'id_str': me.id_str,
         'name': me.name,
         'follower count': me.followers_count,
         'screen name': me.screen_name,
-        'retrieved_date': now()
+        'retrieved_date': now().isoformat()
     }
-    user_list = [me.id_str]
     follower_list = []
-    for user in user_list:
+    for user in [me.id]:
         # todo refactor this to use a comprehension (?)
         followers = []
         try:
@@ -56,11 +68,18 @@ if __name__ == '__main__':
         for follower in followers:
             this = api.get_user(user_id=follower)
             data[follower] = {
-                'id_str': this.id_str,
+                'id': this.id,
                 'name': this.name,
                 'follower count': this.followers_count,
                 'screen name': this.screen_name,
-                'retrieved_date': now()
+                'retrieved_date': now().isoformat()
             }
+        data[user]['follower_list'] = follower_list
+
+    output_file = '{}/{}'.format(settings['output_folder'], settings['output_file']).replace('//', '/')
+    with open(file=output_file, mode='w') as output_fp:
+        dump(obj=data, fp=output_fp, sort_keys=True, indent=4)
+
+    # todo under some conditions copy the output file back to the input file
 
     logger.info('total time: {:5.2f}s'.format((now() - time_start).total_seconds()))
