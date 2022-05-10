@@ -13,7 +13,7 @@ if __name__ == '__main__':
     logger = getLogger(__name__)
     basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=INFO, )
     logger.info('started.', )
-    with open(file='./settings.json', mode='r', ) as settings_fp:
+    with open(file='./main_settings.json', mode='r', ) as settings_fp:
         settings = load(fp=settings_fp, )
     logger.info('settings: {}'.format(settings))
     api_key = settings['api_key']
@@ -29,5 +29,9 @@ if __name__ == '__main__':
     timeline = api.home_timeline()
     for item in timeline:
         logger.info(item.text)
+
+    user = api.get_user(screen_name=settings['user'])
+    id_ = user.id
+    users = api.get_user(id=id_)
 
     logger.info('total time: {:5.2f}s'.format(time() - time_start))
