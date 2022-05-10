@@ -1,16 +1,16 @@
+from json import dump
+from json import dumps
 from json import load
 from logging import INFO
 from logging import basicConfig
 from logging import getLogger
+from os.path import isfile
 
 from arrow import now
 from tweepy import API
 from tweepy import Cursor
 from tweepy import OAuthHandler
 from tweepy import TweepyException
-from json import dump
-from json import load
-from os.path import isfile
 
 if __name__ == '__main__':
     time_start = now()
@@ -26,15 +26,12 @@ if __name__ == '__main__':
     logger.info('secret key: {}'.format(api_secret_key, ), )
     access_token = settings['access_token']
     access_token_secret = settings['access_token_secret']
-    follower_count_cutoff = settings['follower_count_cutoff']
-    data_folder = settings['input_folder']
-    if not str(data_folder).endswith('/'):
-        data_folder += '/'
-    input_file = data_folder + settings['input_file']
+    input_file = '{}/{}'.format(settings['input_folder'], settings['input_file']).replace('//', '/')
 
     if isfile(input_file):
         with open(file=input_file, mode='r') as input_fp:
             data = load(fp=input_fp)
+        logger.info('loaded %d items from %s', len(data), input_file)
     else:
         data = dict()
 
@@ -46,15 +43,15 @@ if __name__ == '__main__':
     logger.info('ID: %d %s screen name: %s', me.id, me.id_str, me.name)
 
     # add the root user to the data
-    data[me.id] = {
-        'id_str': me.id_str,
+    data[me.id_str] = {
+        'id': me.id_str,
         'name': me.name,
         'follower count': me.followers_count,
         'screen name': me.screen_name,
         'retrieved_date': now().isoformat()
     }
     follower_list = []
-    for user in [me.id]:
+    for user in [me.id_str]:
         # todo refactor this to use a comprehension (?)
         followers = []
         try:
@@ -64,19 +61,24 @@ if __name__ == '__main__':
         except TweepyException as tweepy_exception:
             logger.warning(tweepy_exception)
             continue
-        follower_list.append(followers)
-        for follower in followers:
-            this = api.get_user(user_id=follower)
-            data[follower] = {
-                'id': this.id,
-                'name': this.name,
-                'follower count': this.followers_count,
-                'screen name': this.screen_name,
-                'retrieved_date': now().isoformat()
-            }
-        data[user]['follower_list'] = follower_list
+        follower_list.extend(followers)
+        for index, follower in enumerate(followers):
+            if str(follower) not in data.keys():
+                logger.info('get_user for %d (%d) %d', follower, index, len(data))
+                this = api.get_user(user_id=follower)
+                data[str(follower)] = {
+                    'id': this.id_str,
+                    'name': this.name,
+                    'follower count': this.followers_count,
+                    'screen name': this.screen_name,
+                    'retrieved_date': now().isoformat()
+                }
+            else:
+                logger.info('skipping %d because it is already present', follower)
+        data[user]['follower_list'] = [str(item) for item in follower_list]
 
     output_file = '{}/{}'.format(settings['output_folder'], settings['output_file']).replace('//', '/')
+    string_version = dumps(obj=data, sort_keys=True, indent=4)
     with open(file=output_file, mode='w') as output_fp:
         dump(obj=data, fp=output_fp, sort_keys=True, indent=4)
 
