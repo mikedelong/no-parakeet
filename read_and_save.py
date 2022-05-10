@@ -27,6 +27,7 @@ if __name__ == '__main__':
     access_token = settings['access_token']
     access_token_secret = settings['access_token_secret']
     input_file = '{}/{}'.format(settings['input_folder'], settings['input_file']).replace('//', '/')
+    output_file = '{}/{}'.format(settings['output_folder'], settings['output_file']).replace('//', '/')
 
     if isfile(input_file):
         with open(file=input_file, mode='r') as input_fp:
@@ -75,9 +76,15 @@ if __name__ == '__main__':
                 }
             else:
                 logger.info('skipping %d because it is already present', follower)
+            if index % 100 == 0:
+                data[user]['follower_list'] = [str(item) for item in follower_list]
+                string_version = dumps(obj=data, sort_keys=True, indent=4)
+                logger.info('writing size %d to %s', len(data), output_file)
+                with open(file=output_file, mode='w') as output_fp:
+                    dump(obj=data, fp=output_fp, sort_keys=True, indent=4)
+
         data[user]['follower_list'] = [str(item) for item in follower_list]
 
-    output_file = '{}/{}'.format(settings['output_folder'], settings['output_file']).replace('//', '/')
     string_version = dumps(obj=data, sort_keys=True, indent=4)
     with open(file=output_file, mode='w') as output_fp:
         dump(obj=data, fp=output_fp, sort_keys=True, indent=4)
