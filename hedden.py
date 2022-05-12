@@ -18,7 +18,6 @@ from networkx import spring_layout
 from pandas import DataFrame
 from pandas import concat
 from pandas import merge
-from pandas import read_csv
 from plotly.graph_objects import Figure
 from plotly.graph_objects import Layout
 from plotly.graph_objects import Scatter
@@ -114,8 +113,8 @@ if __name__ == '__main__':
     G_sorted = DataFrame(sorted(G.degree, key=lambda x: x[1], reverse=True))
     G_sorted.columns = ['nconst', 'degree']
     logger.info(G_sorted.head().to_dict())
-
     G_tmp = k_core(G=G, k=3)
+    pos = spring_layout(G_tmp)
 
     # todo roll these up
     # Turn partition into dataframe
@@ -132,7 +131,6 @@ if __name__ == '__main__':
     graph_package = 'plotly'
 
     if graph_package == 'matplotlib':
-        pos = spring_layout(G_tmp)
         f, ax = subplots(figsize=(10, 10))
         style.use('ggplot')
         nodes = draw_networkx_nodes(G_tmp, pos, cmap=cm.Set1, node_color=combined['group'], alpha=0.8)
@@ -180,8 +178,8 @@ if __name__ == '__main__':
         fig = Figure(data=[edge_trace, node_trace],
                      layout=Layout(
                          title='<br>network graph',
-                         titlefont_size=16,
                          showlegend=False,
+                         titlefont_size=16,
                          hovermode='closest',
                          margin=dict(b=20, l=5, r=5, t=40),
                          annotations=[dict(
