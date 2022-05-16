@@ -1,11 +1,11 @@
-from json import load
 from logging import INFO
 from logging import basicConfig
 from logging import getLogger
+from math import log10
 from time import time
 
-from networkx import spring_layout
 from networkx import read_gpickle
+from networkx import spring_layout
 from plotly.graph_objects import Figure
 from plotly.graph_objects import Layout
 from plotly.graph_objects import Scatter
@@ -58,8 +58,9 @@ if __name__ == '__main__':
     node_adjacencies = []
     node_text = []
     for node, adjacencies in enumerate(G.adjacency()):
-        node_adjacencies.append(len(adjacencies[1]))
-        node_text.append('# of connections: ' + str(len(adjacencies[1])))
+        # use the log10 since we don't have a lot of diversity of scale
+        node_adjacencies.append(1 + log10(len(adjacencies[1])))
+        node_text.append('{} : {}'.format(adjacencies[0], len(adjacencies[1])))
 
     node_trace.marker.color = node_adjacencies
     node_trace.text = node_text
