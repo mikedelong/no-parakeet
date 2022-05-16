@@ -69,7 +69,6 @@ if __name__ == '__main__':
                  layout=Layout(
                      title='<br>network graph',
                      showlegend=False,
-                     titlefont_size=16,
                      hovermode='closest',
                      margin=dict(b=20, l=5, r=5, t=40),
                      annotations=[dict(
